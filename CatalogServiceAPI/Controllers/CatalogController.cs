@@ -29,6 +29,11 @@ public class CatalogController : ControllerBase
     public CatalogController(ILogger<CatalogController> logger)
     {
         _logger = logger;
+        var hostName = System.Net.Dns.GetHostName();
+        var ips = System.Net.Dns.GetHostAddresses(hostName); var _ipaddr = 
+        ips.First().MapToIPv4().ToString();
+        _logger.LogInformation(1, $"Member-service responding from {_ipaddr}");
+
     }
 
     [HttpGet("GetProductById")]
@@ -61,6 +66,5 @@ public class CatalogController : ControllerBase
 
         return properties;
     }
-
 
 }
