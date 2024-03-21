@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using NLog;
 using NLog.Web;
 
@@ -10,11 +11,10 @@ try {
     // Add services to the container.
 
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    builder.Logging.ClearProviders().AddConsole();
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
@@ -27,11 +27,39 @@ try {
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
+    var imagePath = app.Configuration["ImagePath"];
+    if (String.IsNullOrEmpty(imagePath)) 
+    {
+        logger.Warn("No image path found. Cannot serve images to clients.");
+    }
+    else
+    {
+        var fileProvider = new PhysicalFileProvider(Path.GetFullPath(imagePath));
+        var requestPath = new PathString("/images");
+        
+        app.UseStaticFiles(new StaticFileOptions()
+        {
+            FileProvider = fileProvider,
+            RequestPath = requestPath
+        } );
+        
+        logger.Info($"Serving images to clients from path: {imagePath}");
+    }
 
+    app.UseHttpsRedirection();
     app.UseAuthorization();
 
     app.MapControllers();
+
+    app.MapGet("/", () => {
+        var html = $"""
+            <html><body>
+                <h2>HaaV Catalog Service</h2>
+                <br/>
+            </body></html>
+        """;
+        return Results.Content(html, "text/html");
+    });
 
     app.Run();
 }

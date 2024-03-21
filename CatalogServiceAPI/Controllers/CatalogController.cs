@@ -30,9 +30,10 @@ public class CatalogController : ControllerBase
     {
         _logger = logger;
         var hostName = System.Net.Dns.GetHostName();
-        var ips = System.Net.Dns.GetHostAddresses(hostName); var _ipaddr = 
-        ips.First().MapToIPv4().ToString();
-        _logger.LogInformation(1, $"Member-service responding from {_ipaddr}");
+        var ips = System.Net.Dns.GetHostAddresses(hostName); 
+        var _ipAddr = ips.First().MapToIPv4().ToString();
+
+        _logger.LogInformation(1, $"Member-service responding from {_ipAddr}");
 
     }
 
