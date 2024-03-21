@@ -1,0 +1,46 @@
+version: '3.8'
+
+services: 
+  catalog-svc:
+    image: hnrkjnsn/catalog-service:latest
+    hostname: catalog-svc
+    environment:
+    - ImagePath=/srv/images
+    ports:
+    - "5001:8080"
+    networks:
+    - default
+    - devops
+    volumes:
+    - images:/srv/images
+
+  loki:
+    image: grafana/loki
+    hostname: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - devops
+
+  grafana:
+    image: grafana/grafana:latest
+    hostname: grafana
+    ports:
+    - "3000:3000"
+    volumes:
+    - grafana-storage:/var/lib/grafana
+    networks:
+    - devops
+
+volumes:
+  images:
+    external: false
+  grafana-storage:
+    external: false
+
+networks:
+  devops:
+  default:
+    driver: bridge
+    name: svcnet
