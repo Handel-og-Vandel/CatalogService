@@ -15,7 +15,7 @@ jobs:
       DOCKER_USER: ${{ secrets.DOCKER_USER }} 
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       IMAGE_NAME: catalog-service
-      IMAGE_VERSION: latest
+      IMAGE_VERSION: 1.1.0
 
     steps:
     - uses: actions/checkout@v4
